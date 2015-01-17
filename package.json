@@ -1,5 +1,5 @@
 {
-  "name": "Showtime Server",
+  "name": "Showtime-Server",
   "description": "A movie showtime API built with express",
   "version": "0.1.2",
   "main": "index.js",
