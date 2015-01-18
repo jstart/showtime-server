@@ -226,6 +226,8 @@ module.exports = Showtimes;
 
 var express = require('express');
 var app = express();
+var cache_manager = require('cache-manager');
+var memory_cache = cache_manager.caching({store: 'memory', max: 1000, ttl: 86400/*seconds*/});
 
 app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/public'));
@@ -237,14 +239,22 @@ app.get('/', function(request, response) {
 app.get('/showtimes', function (request, response) {
         var zipcode = request.query.zipcode
         var date = request.query.date ? request.query.date : 0;
+        var now = new Date();
         
-        if (zipcode) {
+        if (request.query.lat && request.query.lon) {
+            var cache_key = 'showtime:zip:' + request.query.zipcode + "date:" + now.getMonth() + now.getDate() + now.getFullYear();
+            memory_cache.wrap(cache_key, function(cache_cb) {
+                              var s = Showtimes(request.query.lat + "," + request.query.lon, { date: date });
+                              s.getTheaters(function (err, theaters) {
+                                    if (theaters){
+                                        cache_cb(null, theaters)
+                                    }
+                                });
+                              }, function(err, result) {
+                                response.send(result ? result : err);
+                              });
+        }else if(zipcode){
             var s = Showtimes(zipcode, { date: date });
-                s.getTheaters(function (err, theaters) {
-                  response.send(theaters ? theaters : err);
-                });
-        }else if(request.query.lat && request.query.lon){
-            var s = Showtimes(request.query.lat + "," + request.query.lon, { date: date });
             s.getTheaters(function (err, theaters) {
              response.send(theaters ? theaters : err);
             });

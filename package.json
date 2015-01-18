@@ -9,7 +9,8 @@
   "dependencies": {
     "express": "~4.9.x",
     "cheerio": "^0.16.0",
-    "request": "^2.36.0"
+    "request": "^2.36.0",
+    "cache-manager": "~0.16.x"
   },
   "engines": {
     "node": "0.10.x"
