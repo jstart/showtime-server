@@ -237,12 +237,14 @@ app.get('/', function(request, response) {
 });
 
 app.get('/showtimes', function (request, response) {
-        var zipcode = request.query.zipcode
+        var zipcode = request.query.zipcode;
+	var city = request.query.city;
         var date = request.query.date ? request.query.date : 0;
         var now = new Date();
         
         if (request.query.lat && request.query.lon) {
-            var cache_key = 'showtime:zip:' + request.query.zipcode + "date:" + now.getMonth() + now.getDate() + now.getFullYear();
+	    now.setDate(now.getDate() + date);
+            var cache_key = 'showtime:city:' + city + "date:" + now.getMonth() + now.getDate() + now.getFullYear();
             memory_cache.wrap(cache_key, function(cache_cb) {
                               var s = Showtimes(request.query.lat + "," + request.query.lon, { date: date });
                               s.getTheaters(function (err, theaters) {
