@@ -330,7 +330,7 @@ app.get('/showtimes', function (request, response) {
 	var city = request.query.city;
         var date = request.query.date ? request.query.date : 0;
         var now = new Date();
-        
+
         if (request.query.lat && request.query.lon) {
 	    now.setDate(now.getDate() + date);
             var cache_key = 'showtime:city:' + city + "date:" + now.getMonth() + now.getDate() + now.getFullYear();
@@ -358,7 +358,7 @@ app.get('/movie/:id?', function (request, response) {
         var city = request.query.city;
         var date = request.query.date ? request.query.date : 0;
         var now = new Date();
-        
+
         if (request.query.lat && request.query.lon) {
 	        now.setDate(now.getDate() + date);
             var cache_key = 'showtime:mid:' + mid + ':city:' + city + ":date:" + now.getMonth() + now.getDate() + now.getFullYear();
