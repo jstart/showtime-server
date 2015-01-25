@@ -445,33 +445,33 @@ Showtimes.prototype.getMovies = function(cb) {
                 // they don't always apply am/pm to times, we need to run through the showtimes in reverse and then apply the
                 // previous (later) meridiem to the next (earlier) movie showtime so we end up with something like
                 // ["10:00am", "11:20am", "1:00pm", ...].
-                showtimes = movie.find('.times').text().split(' ');
-                meridiem = false;
-
-                showtimes = showtimes.reverse();
-                for (var x in showtimes) {
-                    // Remove non-ASCII characters.
-                    showtime = showtimes[x].replace(/[^\x00-\x7F]/g, '').trim();
-                    match = showtime.match(/(am|pm)/);
-                    if (match) {
-                        meridiem = match[0];
-                    } else {
-                        showtime += meridiem;
-                    }
-
-                    showtimes[x] = showtime;
-                }
-
-                showtimes = showtimes.reverse();
-                for (x in showtimes) {
-                    movieData.showtimes.push(showtimes[x].trim());
-                }
+//                showtimes = movie.find('.times').text().split(' ');
+//                meridiem = false;
+//
+//                showtimes = showtimes.reverse();
+//                for (var x in showtimes) {
+//                    // Remove non-ASCII characters.
+//                    showtime = showtimes[x].replace(/[^\x00-\x7F]/g, '').trim();
+//                    match = showtime.match(/(am|pm)/);
+//                    if (match) {
+//                        meridiem = match[0];
+//                    } else {
+//                        showtime += meridiem;
+//                    }
+//
+//                    showtimes[x] = showtime;
+//                }
+//
+//                showtimes = showtimes.reverse();
+//                for (x in showtimes) {
+//                    movieData.showtimes.push(showtimes[x].trim());
+//                }
 
                 movies.push(movieData);
             });
 
         // No pages to paginate, so return the theaters back.
-        if ($('#navbar td a:contains("Next")').length === 0) {
+        if ($('#navbar td a').text().indexOf('Next') {
             cb(null, movies);
             return;
         }
