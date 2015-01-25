@@ -373,8 +373,8 @@ app.get('/movies', function (request, response) {
                                   bugsnag.autoNotify(function() {
                                     if (theaters){
                                         var movies = Array();
-                                        theaters.each(function(i, theater){
-                                            movies.push(theater.movies);
+                                        theaters.forEach(function(element, index, array) {
+                                            movies.push(element.movies);
                                         });
                                         movies = movies.unique;
                                         cache_cb(null, theaters.movies)
