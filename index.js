@@ -370,6 +370,7 @@ app.get('/movies', function (request, response) {
             memory_cache.wrap(cache_key, function(cache_cb) {
                               var s = Showtimes(request.query.lat + "," + request.query.lon, { date: date });
                               s.getTheaters(function (err, theaters) {
+                                  bugsnag.autoNotify(function() {
                                     if (theaters){
                                         var movies = Array();
                                         theaters.each(function(i, theater){
@@ -378,6 +379,7 @@ app.get('/movies', function (request, response) {
                                         movies = movies.unique;
                                         cache_cb(null, theaters.movies)
                                     }
+                                  }
                                 });
                               }, function(err, result) {
                                 response.send(result ? result : err);
