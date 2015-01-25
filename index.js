@@ -324,7 +324,7 @@ Array.prototype.unique = function() {
 };
 var bugsnag = require("bugsnag");
 bugsnag.register("57c9b974a3ace125470d8943e5f8da1e");
-bugsnag.notify(new Error("Non-fatal"));
+
 var express = require('express');
 var app = express();
 app.use(bugsnag.requestHandler);
@@ -349,12 +349,14 @@ app.get('/showtimes', function (request, response) {
         if (request.query.lat && request.query.lon) {
             var cache_key = 'showtimes:city:' + city + "date:" + now.getMonth() + now.getDate() + now.getFullYear();
             memory_cache.wrap(cache_key, function(cache_cb) {
-                              var s = Showtimes(request.query.lat + "," + request.query.lon, { date: date });
+                bugsnag.autoNotify(function() {
+                    var s = Showtimes(request.query.lat + "," + request.query.lon, { date: date });
                               s.getTheaters(function (err, theaters) {
                                     if (theaters){
                                         cache_cb(null, theaters)
                                     }
-                                });
+                                });});
+                             
                               }, function(err, result) {
                                 response.send(result ? result : err);
                               });
