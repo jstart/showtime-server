@@ -379,7 +379,7 @@ app.get('/movies', function (request, response) {
                                         movies = movies.unique;
                                         cache_cb(null, theaters.movies)
                                     }
-                                  }
+                                  });
                                 });
                               }, function(err, result) {
                                 response.send(result ? result : err);
