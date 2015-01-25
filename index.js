@@ -471,9 +471,7 @@ Showtimes.prototype.getMovies = function(cb) {
 
         // No pages to paginate, so return the theaters back.
         console.log($('#navbar td:last-child a').text());
-        console.log($('#navbar td:last-child a:contains("Next")'.length));
-
-        if ($('#navbar td:last-child a:contains("Next")').length === 0) {
+        if ($('#navbar td:last-child a').text.length !== 4) {
             cb(null, movies);
             return;
         }
