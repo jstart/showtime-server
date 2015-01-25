@@ -313,15 +313,6 @@ Showtimes.prototype.getMovie = function(mid, cb) {
 
 module.exports = Showtimes;
 
-Array.prototype.unique = function() {
-    var unique = [];
-    for (var i = 0; i < this.length; i++) {
-        if (unique.indexOf(this[i]) == -1) {
-            unique.push(this[i]);
-        }
-    }
-    return unique;
-};
 var bugsnag = require("bugsnag");
 bugsnag.register("57c9b974a3ace125470d8943e5f8da1e");
 
