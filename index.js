@@ -233,6 +233,7 @@ Showtimes.prototype.getMovie = function(mid, cb) {
 
     var options = {
         url: self.baseUrl,
+        sort: 1,
         qs: {
             mid: mid,
             date: (typeof self.date !== 'undefined') ? self.date : 0
@@ -373,15 +374,10 @@ app.get('/movies', function (request, response) {
                                   bugsnag.autoNotify(function() {
                                     if (theaters){
                                         var movies = Array();
-                                        var modifiedMovies = Array();
                                         theaters.forEach(function(element, index, array) {
                                             movies.push(element.movies);
-                                            movies.forEach(function(element, index, array) {
-                                                deleteKey(element, 'showtimes');
-                                                modifiedMovies.push(element);
-                                            });
                                         });
-                                        cache_cb(null, modifiedMovies)
+                                        cache_cb(null, movies)
                                     }
                                   });
                                 });
