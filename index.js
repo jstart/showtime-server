@@ -311,7 +311,7 @@ Showtimes.prototype.getMovie = function(mid, cb) {
     });
 };
 
-Showtimes.prototype.getMovies = function(mid, cb) {
+Showtimes.prototype.getMovies = function(cb) {
     var self = this;
     var page = 1;
     var movies = [];
@@ -320,7 +320,7 @@ Showtimes.prototype.getMovies = function(mid, cb) {
         url: self.baseUrl,
         sort: 1,
         qs: {
-            mid: mid,
+            start: ((page - 1) * 10)            
             date: (typeof self.date !== 'undefined') ? self.date : 0
         },
         headers: {
