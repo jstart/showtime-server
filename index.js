@@ -376,8 +376,12 @@ app.get('/movies', function (request, response) {
                                         var modifiedMovies = Array();
                                         theaters.forEach(function(element, index, array) {
                                             movies.push(element.movies);
+                                            movies.forEach(function(element, index, array) {
+                                                deleteKey(element, 'showtimes');
+                                                modifiedMovies.push(element);
+                                            });
                                         });
-                                        cache_cb(null, movies)
+                                        cache_cb(null, modifiedMovies)
                                     }
                                   });
                                 });

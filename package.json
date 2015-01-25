@@ -12,7 +12,8 @@
     "cheerio": "^0.16.0",
     "request": "^2.36.0",
     "cache-manager": "~0.16.x",
-    "bugsnag": "1.5.x"
+    "bugsnag": "1.5.x",
+    "key-del": "0.1.x"
   },
   "engines": {
     "node": "0.10.x"
