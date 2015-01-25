@@ -537,8 +537,9 @@ app.get('/movies', function (request, response) {
             var cache_key = 'movies:city:' + city + "date:" + now.getMonth() + now.getDate() + now.getFullYear();
             memory_cache.wrap(cache_key, function(cache_cb) {
                               var s = Showtimes(request.query.lat + "," + request.query.lon, { date: date });
+                              bugsnag.autoNotify(function() {
+
                               s.getMovies(function (err, movies) {
-                                  bugsnag.autoNotify(function() {
                                     if (movies){
                                         cache_cb(null, movies)
                                     }
