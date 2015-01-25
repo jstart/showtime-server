@@ -376,7 +376,6 @@ app.get('/movies', function (request, response) {
                                         theaters.forEach(function(element, index, array) {
                                             movies.push(element.movies);
                                         });
-                                        movies = movies.unique;
                                         cache_cb(null, movies)
                                     }
                                   });
