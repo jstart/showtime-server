@@ -8,7 +8,6 @@
   },
   "dependencies": {
     "express": "~4.9.x",
-    "pg": "4.x",
     "cheerio": "^0.16.0",
     "request": "^2.36.0",
     "cache-manager": "~0.16.x",
