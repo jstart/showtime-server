@@ -319,7 +319,7 @@ Showtimes.prototype.getMovies = function(cb) {
 
     if (arguments.length > 1) {
         page = arguments[1];
-        theaters = arguments[2];
+        movies = arguments[2];
     }
     
     var options = {
