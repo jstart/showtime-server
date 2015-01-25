@@ -229,7 +229,6 @@ Showtimes.prototype.getTheaters = function(cb) {
  */
 Showtimes.prototype.getMovie = function(mid, cb) {
     var self = this;
-    var page = 1;
     var theaters = [];
 
     var options = {
@@ -314,6 +313,7 @@ Showtimes.prototype.getMovie = function(mid, cb) {
 
 Showtimes.prototype.getMovies = function(mid, cb) {
     var self = this;
+    var page = 1;
     var movies = [];
 
     var options = {
