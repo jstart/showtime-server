@@ -317,6 +317,11 @@ Showtimes.prototype.getMovies = function(cb) {
     var page = 1;
     var movies = [];
 
+    if (arguments.length > 1) {
+        page = arguments[1];
+        theaters = arguments[2];
+    }
+    
     var options = {
         url: self.baseUrl,
         sort: 1,
@@ -470,14 +475,13 @@ Showtimes.prototype.getMovies = function(cb) {
             });
 
         // No pages to paginate, so return the theaters back.
-        console.log($('#navbar td:last-child a').text());
         if ($('#navbar td:last-child a').text.length !== 4) {
             cb(null, movies);
             return;
         }
 
-        // Use the hidden API of getTheaters to pass in the next page and current
-        // theaters.
+        // Use the hidden API of getMovies to pass in the next page and current
+        // movies.
         self.getMovies(cb, ++page, movies);
 
         return;
@@ -493,13 +497,13 @@ var app = express();
 app.use(bugsnag.requestHandler);
 app.use(bugsnag.requestHandler);
 var cache_manager = require('cache-manager');
-var memory_cache = cache_manager.caching({store: 'memory', max: 1000, ttl: 900/*seconds*/});
+var memory_cache = cache_manager.caching({store: 'memory', max: 10000, ttl: 900/*seconds*/});
 
 app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/public'));
 
 app.get('/', function(request, response) {
-  response.send("Hey");
+  response.send("");
 });
 
 app.get('/showtimes', function (request, response) {
