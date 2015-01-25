@@ -234,6 +234,7 @@ Showtimes.prototype.getMovie = function(mid, cb) {
     var options = {
         url: self.baseUrl,
         qs: {
+            near: self.location,
             mid: mid,
             date: (typeof self.date !== 'undefined') ? self.date : 0
         },
@@ -320,7 +321,8 @@ Showtimes.prototype.getMovies = function(cb) {
         url: self.baseUrl,
         sort: 1,
         qs: {
-            start: ((page - 1) * 10)            
+            near: self.location,
+            start: ((page - 1) * 10),        
             date: (typeof self.date !== 'undefined') ? self.date : 0
         },
         headers: {
