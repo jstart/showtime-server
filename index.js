@@ -475,7 +475,7 @@ Showtimes.prototype.getMovies = function(mid, cb) {
 
         // Use the hidden API of getTheaters to pass in the next page and current
         // theaters.
-        self.getMovies(cb, ++page, movies);
+        self.getTheaters(cb, ++page, movies);
 
         return;
     });
