@@ -313,7 +313,7 @@ Showtimes.prototype.getMovie = function(mid, cb) {
 
 Showtimes.prototype.getMovies = function(mid, cb) {
     var self = this;
-    var theaters = [];
+    var movies = [];
 
     var options = {
         url: self.baseUrl,
@@ -355,28 +355,12 @@ Showtimes.prototype.getMovies = function(mid, cb) {
         var theaterData;
         var trailer;
 
-        if ($('.theater').length === 0) {
+        if ($('.movie_results').length === 0) {
             cb($('#results').text());
             return;
         }
 
-        $('.theater').each(function(i, theater) {
-            theater = $(theater);
-
-            cloakedUrl = theater.find('.desc h2.name a').attr('href');
-            theaterId = qs.parse(url.parse(cloakedUrl).query).tid;
-
-            info = theater.find('.desc .info').text().split(' - ');
-
-            theaterData = {
-                id: theaterId,
-                name: theater.find('.desc h2.name').text(),
-                address: info[0] ? info[0].trim() : '',
-                phoneNumber: info[1] ? info[1].trim() : '',
-                movies: []
-            };
-
-            theater.find('.showtimes .movie').each(function(j, movie) {
+        $('.movie').each(function(i, movie) {
                 movie = $(movie);
 
                 cloakedUrl = movie.find('.name a').attr('href');
@@ -479,21 +463,18 @@ Showtimes.prototype.getMovies = function(mid, cb) {
                     movieData.showtimes.push(showtimes[x].trim());
                 }
 
-                theaterData.movies.push(movieData);
+                movies.push(movieData);
             });
-
-            theaters.push(theaterData);
-        });
 
         // No pages to paginate, so return the theaters back.
         if ($('#navbar td a:contains("Next")').length === 0) {
-            cb(null, theaters);
+            cb(null, movies);
             return;
         }
 
         // Use the hidden API of getTheaters to pass in the next page and current
         // theaters.
-        self.getTheaters(cb, ++page, theaters);
+        self.getMovies(cb, ++page, movies);
 
         return;
     });
