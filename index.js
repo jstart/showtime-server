@@ -373,13 +373,15 @@ app.get('/movies', function (request, response) {
                                   bugsnag.autoNotify(function() {
                                     if (theaters){
                                         var movies = Array();
+                                        var modifiedMovies = Array();
                                         theaters.forEach(function(element, index, array) {
                                             movies.push(element.movies);
                                             movies.forEach(function(element, index, array) {
-                                                delete element.showtimes;
+                                                delete element['showtimes'];
+                                                modifiedMovies.push(element);
                                             });
                                         });
-                                        cache_cb(null, movies)
+                                        cache_cb(null, modifiedMovies)
                                     }
                                   });
                                 });
