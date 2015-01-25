@@ -340,13 +340,12 @@ app.get('/showtimes', function (request, response) {
         if (request.query.lat && request.query.lon) {
             var cache_key = 'showtimes:city:' + city + "date:" + now.getMonth() + now.getDate() + now.getFullYear();
             memory_cache.wrap(cache_key, function(cache_cb) {
-                bugsnag.autoNotify(function() {
                     var s = Showtimes(request.query.lat + "," + request.query.lon, { date: date });
                               s.getTheaters(function (err, theaters) {
                                     if (theaters){
                                         cache_cb(null, theaters)
                                     }
-                                });});
+                                });
                              
                               }, function(err, result) {
                                 response.send(result ? result : err);
@@ -359,37 +358,37 @@ app.get('/showtimes', function (request, response) {
         }
 });
 
-//app.get('/movies', function (request, response) {
-//        var zipcode = request.query.zipcode;
-//	    var city = request.query.city;
-//        var date = request.query.date ? request.query.date : 0;
-//        var now = new Date();
-//        now.setDate(now.getDate() + date);
-//
-//        if (request.query.lat && request.query.lon) {
-//            var cache_key = 'movies:city:' + city + "date:" + now.getMonth() + now.getDate() + now.getFullYear();
-//            memory_cache.wrap(cache_key, function(cache_cb) {
-//                              var s = Showtimes(request.query.lat + "," + request.query.lon, { date: date });
-//                              s.getTheaters(function (err, theaters) {
-//                                    if (theaters){
-//                                        var movies = Array();
-//                                        theaters.each(function(i, theater){
-//                                            movies.push(theater.movies);
-//                                        });
-//                                        movies = movies.unique;
-//                                        cache_cb(null, theaters.movies)
-//                                    }
-//                                });
-//                              }, function(err, result) {
-//                                response.send(result ? result : err);
-//                              });
-//        }else if(zipcode){
-//            var s = Showtimes(zipcode, { date: date });
-//            s.getTheaters(function (err, theaters) {
-//             response.send(theaters ? theaters : err);
-//            });
-//        }
-//});
+app.get('/movies', function (request, response) {
+        var zipcode = request.query.zipcode;
+	    var city = request.query.city;
+        var date = request.query.date ? request.query.date : 0;
+        var now = new Date();
+        now.setDate(now.getDate() + date);
+
+        if (request.query.lat && request.query.lon) {
+            var cache_key = 'movies:city:' + city + "date:" + now.getMonth() + now.getDate() + now.getFullYear();
+            memory_cache.wrap(cache_key, function(cache_cb) {
+                              var s = Showtimes(request.query.lat + "," + request.query.lon, { date: date });
+                              s.getTheaters(function (err, theaters) {
+                                    if (theaters){
+                                        var movies = Array();
+                                        theaters.each(function(i, theater){
+                                            movies.push(theater.movies);
+                                        });
+                                        movies = movies.unique;
+                                        cache_cb(null, theaters.movies)
+                                    }
+                                });
+                              }, function(err, result) {
+                                response.send(result ? result : err);
+                              });
+        }else if(zipcode){
+            var s = Showtimes(zipcode, { date: date });
+            s.getTheaters(function (err, theaters) {
+             response.send(theaters ? theaters : err);
+            });
+        }
+});
 
 app.get('/movie/:id?', function (request, response) {
         var mid = request.params.id;
