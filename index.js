@@ -471,7 +471,7 @@ Showtimes.prototype.getMovies = function(cb) {
 
         // No pages to paginate, so return the theaters back.
         console.log($('#navbar td a').text().indexOf('Next'));
-        if ($('#navbar td a').text().indexOf('Next')) {
+        if ($('#navbar td a').text().indexOf('Next') === 1) {
             cb(null, movies);
             return;
         }
@@ -569,7 +569,7 @@ app.get('/movie/:id?', function (request, response) {
 	    now.setDate(now.getDate() + date);
 
         if (request.query.lat && request.query.lon) {
-            var cache_key = 'showtime:mid:' + mid + ':city:' + city + ":date:" + now.getMonth() + now.getDate() + now.getFullYear();
+            var cache_key = 'movie:mid:' + mid + ':city:' + city + ":date:" + now.getMonth() + now.getDate() + now.getFullYear();
             memory_cache.wrap(cache_key, function(cache_cb) {
                               var s = Showtimes(request.query.lat + "," + request.query.lon, { date: date });
                               s.getMovie(mid, function (err, theaters) {
