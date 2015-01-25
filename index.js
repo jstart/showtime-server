@@ -356,7 +356,7 @@ Showtimes.prototype.getMovies = function(mid, cb) {
         var theaterData;
         var trailer;
 
-        if ($('.movie_results').length === 0) {
+        if ($('.movie').length === 0) {
             cb($('#results').text());
             return;
         }
