@@ -537,13 +537,9 @@ app.get('/movies', function (request, response) {
             var cache_key = 'movies:city:' + city + "date:" + now.getMonth() + now.getDate() + now.getFullYear();
             memory_cache.wrap(cache_key, function(cache_cb) {
                               var s = Showtimes(request.query.lat + "," + request.query.lon, { date: date });
-                              s.getTheaters(function (err, theaters) {
+                              s.getMovies(function (err, movies) {
                                   bugsnag.autoNotify(function() {
-                                    if (theaters){
-                                        var movies = Array();
-                                        theaters.forEach(function(element, index, array) {
-                                            movies.push(element.movies);
-                                        });
+                                    if (movies){
                                         cache_cb(null, movies)
                                     }
                                   });
