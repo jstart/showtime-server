@@ -470,7 +470,8 @@ Showtimes.prototype.getMovies = function(cb) {
             });
 
         // No pages to paginate, so return the theaters back.
-        if ($('#navbar td a')[$('#navbar td a').length - 1].text().indexOf('Next') === 1) {
+        console.log($('#navbar td a')[$('#navbar td a').length - 1].text());
+        if ($('#navbar td a').text().indexOf('Next') === 1) {
             cb(null, movies);
             return;
         }
