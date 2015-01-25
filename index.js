@@ -375,6 +375,9 @@ app.get('/movies', function (request, response) {
                                         var movies = Array();
                                         theaters.forEach(function(element, index, array) {
                                             movies.push(element.movies);
+                                            movies.forEach(function(element, index, array) {
+                                                delete element.showtimes;
+                                            });
                                         });
                                         cache_cb(null, movies)
                                     }
