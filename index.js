@@ -425,7 +425,6 @@ Showtimes.prototype.getMovies = function(cb) {
                     genre: genre,
                     imdb: imdb,
                     trailer: trailer,
-                    showtimes: []
                 };
 
                 // Remove non-ASCII characters.
@@ -471,6 +470,7 @@ Showtimes.prototype.getMovies = function(cb) {
             });
 
         // No pages to paginate, so return the theaters back.
+        console.log($('#navbar td a').text().indexOf('Next'));
         if ($('#navbar td a').text().indexOf('Next')) {
             cb(null, movies);
             return;
