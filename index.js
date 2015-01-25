@@ -313,6 +313,16 @@ Showtimes.prototype.getMovie = function(mid, cb) {
 
 module.exports = Showtimes;
 
+Array.prototype.unique = function() {
+    var unique = [];
+    for (var i = 0; i < this.length; i++) {
+        if (unique.indexOf(this[i]) == -1) {
+            unique.push(this[i]);
+        }
+    }
+    return unique;
+};
+
 var express = require('express');
 var app = express();
 var cache_manager = require('cache-manager');
@@ -365,6 +375,11 @@ app.get('/movies', function (request, response) {
                               var s = Showtimes(request.query.lat + "," + request.query.lon, { date: date });
                               s.getTheaters(function (err, theaters) {
                                     if (theaters){
+                                        var movies = Array();
+                                        theaters.each(function(i, theater){
+                                            movies.push(theater.movies);
+                                        });
+                                        movies = movies.unique;
                                         cache_cb(null, theaters.movies)
                                     }
                                 });
