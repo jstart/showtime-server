@@ -322,7 +322,8 @@ Array.prototype.unique = function() {
     }
     return unique;
 };
-
+var bugsnag = require("bugsnag");
+bugsnag.register("57c9b974a3ace125470d8943e5f8da1e");
 var express = require('express');
 var app = express();
 var cache_manager = require('cache-manager');
