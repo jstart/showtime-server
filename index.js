@@ -363,7 +363,6 @@ Showtimes.prototype.getMovies = function(cb) {
         var theaterData;
         var trailer;
         
-        console.log($('.movie').length);
         if ($('.movie').length === 0) {
             cb($('#results').text());
             return;
@@ -473,12 +472,13 @@ Showtimes.prototype.getMovies = function(cb) {
 
                 movies.push(movieData);
             });
-
+        console.log(page);
         // No pages to paginate, so return the theaters back.
         if ($('#navbar td:last-child a').text.length !== 4) {
             cb(null, movies);
             return;
         }
+        console.log(page);
 
         // Use the hidden API of getMovies to pass in the next page and current
         // movies.
