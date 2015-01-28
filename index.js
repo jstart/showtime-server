@@ -522,6 +522,7 @@ app.get('/showtimes', function (request, response) {
       });
 
     }, function(err, result) {
+      response.setHeader('Cache-Control', 'public, max-age=' + '60*60'); // one year
       response.send(result ? result : err);
     });
   }else if(zipcode){
@@ -552,8 +553,6 @@ app.get('/movies', function (request, response) {
         });
       });
     }, function(err, result) {
-      var cacheDate = new Date();
-      now.setUTCHours(0, 0, 0, 0);
       response.setHeader('Cache-Control', 'public, max-age=' + '60*60'); // one year
       response.send(result ? result : err);
     });
