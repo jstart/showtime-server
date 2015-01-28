@@ -55,7 +55,7 @@ Showtimes.prototype.getTheaters = function(cb) {
 
   request(options, function(error, response, body) {
     bugsnag.autoNotify(function() {
-      console.log(self.baseUrl + "?near="+ self.location + "&date=" + options.qs.date + "&start=" + options.qs.start);
+      console.log(self.baseUrl + '?near='+ self.location + '&date=' + options.qs.date + '&start=' + options.qs.start);
       if (error || response.statusCode !== 200) {
         if (error === null) {
           cb('Unknown error occured while querying theater data from Google Movies.');
@@ -502,7 +502,7 @@ app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/public'));
 
 app.get('/', function(request, response) {
-  response.send("");
+  response.send('');
 });
 
 app.get('/showtimes', function (request, response) {
@@ -512,7 +512,7 @@ app.get('/showtimes', function (request, response) {
   var now = new Date();
   now.setDate(now.getDate() + date);
   if (request.query.lat && request.query.lon) {
-    var cache_key = 'showtimes:city:' + city + "date:" + now.getMonth() + now.getDate() + now.getFullYear();
+    var cache_key = 'showtimes:city:' + city + 'date:' + now.getMonth() + now.getDate() + now.getFullYear();
     memory_cache.wrap(cache_key, function(cache_cb) {
       var s = Showtimes(request.query.lat + "," + request.query.lon, { date: date });
       s.getTheaters(function (err, theaters) {
@@ -540,7 +540,7 @@ app.get('/movies', function (request, response) {
   now.setDate(now.getDate() + date);
 
   if (request.query.lat && request.query.lon) {
-    var cache_key = 'movies:city:' + city + "date:" + now.getMonth() + now.getDate() + now.getFullYear();
+    var cache_key = 'movies:city:' + city + 'date:' + now.getMonth() + now.getDate() + now.getFullYear();
     memory_cache.wrap(cache_key, function(cache_cb) {
       var s = Showtimes(request.query.lat + "," + request.query.lon, { date: date });
       bugsnag.autoNotify(function() {
@@ -552,6 +552,9 @@ app.get('/movies', function (request, response) {
         });
       });
     }, function(err, result) {
+      var cacheDate = new Date();
+      now.setUTCHours(0, 0, 0, 0);
+      response.setHeader('Cache-Control', 'public, max-age=' + '60*60'); // one year
       response.send(result ? result : err);
     });
   }else if(zipcode){
@@ -580,6 +583,7 @@ app.get('/movie/:id?', function (request, response) {
         }
       });
     }, function(err, result) {
+      response.setHeader('Cache-Control', 'public, max-age=' + '60*60'); // one year
       response.send(result ? result : err);
     });
   }
