@@ -321,7 +321,6 @@ Showtimes.prototype.getMovies = function(cb) {
         page = arguments[1];
         movies = arguments[2];
     }
-    
     var options = {
         url: self.baseUrl,
         sort: 1,
@@ -334,7 +333,6 @@ Showtimes.prototype.getMovies = function(cb) {
             'User-Agent': self.userAgent
         }
     };
-
     request(options, function(error, response, body) {
         if (error || response.statusCode !== 200) {
             if (error === null) {
@@ -367,7 +365,7 @@ Showtimes.prototype.getMovies = function(cb) {
             cb($('#results').text());
             return;
         }
-
+        console.log($('.movie').length);
         $('.movie').each(function(i, movie) {
                 movie = $(movie);
 
@@ -469,16 +467,14 @@ Showtimes.prototype.getMovies = function(cb) {
 //                for (x in showtimes) {
 //                    movieData.showtimes.push(showtimes[x].trim());
 //                }
-
                 movies.push(movieData);
             });
-        console.log(page);
+        console.log($('#navbar td:last-child a').text());
         // No pages to paginate, so return the theaters back.
-        if ($('#navbar td:last-child a').text.length !== 4) {
+        if ($('#navbar td:last-child a').text().length !== 4) {
             cb(null, movies);
             return;
         }
-        console.log(page);
 
         // Use the hidden API of getMovies to pass in the next page and current
         // movies.
