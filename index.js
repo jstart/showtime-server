@@ -516,15 +516,12 @@ app.get('/showtimes', function (request, response) {
     memory_cache.wrap(cache_key, function(cache_cb) {
       var s = Showtimes(request.query.lat + "," + request.query.lon, { date: date });
       s.getTheaters(function (err, theaters) {
-        console.log("error" + err);
-        console.log(theaters);
         if (theaters){
           cache_cb(null, theaters)
         }
       });
 
     }, function(err, result) {
-      console.log("error" + err);
       response.send(result ? result : err);
     });
   }else if(zipcode){
