@@ -284,7 +284,7 @@ Showtimes.prototype.getMovie = function (mid, cb) {
     // Movie info format: RUNTIME - RATING - GENRE - TRAILER - IMDB
     // Some movies don't have a rating, trailer, or IMDb pages, so we need
     // to account for that.
-    info = movie.find('.info').text().split(' - ');
+    info = movie.find('.info.links').text().split(' - ');
 
     if (info[0].match(/(hr |min)/)) {
       runtime = info[0].trim();
