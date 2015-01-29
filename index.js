@@ -330,7 +330,7 @@ Showtimes.prototype.getMovie = function (mid, cb) {
 
     var movieData = {
       id: mid,
-      name: movie.find('.name').text(),
+      name: movie.find('h2 .name').text(),
       runtime: runtime,
       rating: rating,
       genre: genre,
