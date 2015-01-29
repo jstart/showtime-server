@@ -355,11 +355,16 @@ Showtimes.prototype.getMovie = function (mid, cb) {
 
     $('.theater').each(function (i, theater) {
       theater = $(theater);
+      cloakedUrl = theater.find('.desc h2.name a').attr('href');
+      theaterId = cloakedUrl ? qs.parse(url.parse(cloakedUrl).query).tid : '';
+
+      info = theater.find('.desc .info').text().split(' - ');
 
       theaterData = {
-        id: '0',
-        name: theater.find('.name').text(),
-        phoneNumber: theater.find('.address').text(),
+        id: theaterId,
+        name: theater.find('.desc h2.name').text(),
+        address: info[0] ? info[0].trim() : '',
+        phoneNumber: info[1] ? info[1].trim() : '',
         showtimes: []
       };
 
