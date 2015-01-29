@@ -31,7 +31,7 @@ function Showtimes(location, options) {
  * @param {object=} [theaters=[]] - Current theaters object. Hidden API and used during pagination.
  * @returns {object}
  */
-Showtimes.prototype.getTheaters = function(cb) {
+Showtimes.prototype.getTheaters = function (cb) {
   var self = this;
   var page = 1;
   var theaters = [];
@@ -53,9 +53,9 @@ Showtimes.prototype.getTheaters = function(cb) {
     }
   };
 
-  request(options, function(error, response, body) {
-    bugsnag.autoNotify(function() {
-      console.log(self.baseUrl + '?near='+ self.location + '&date=' + options.qs.date + '&start=' + options.qs.start);
+  request(options, function (error, response, body) {
+    bugsnag.autoNotify(function () {
+      console.log(self.baseUrl + '?near=' + self.location + '&date=' + options.qs.date + '&start=' + options.qs.start);
       if (error || response.statusCode !== 200) {
         if (error === null) {
           cb('Unknown error occured while querying theater data from Google Movies.');
@@ -88,7 +88,7 @@ Showtimes.prototype.getTheaters = function(cb) {
         return;
       }
 
-      $('.theater').each(function(i, theater) {
+      $('.theater').each(function (i, theater) {
         theater = $(theater);
 
         cloakedUrl = theater.find('.desc h2.name a').attr('href');
@@ -104,7 +104,7 @@ Showtimes.prototype.getTheaters = function(cb) {
           movies: []
         };
 
-        theater.find('.showtimes .movie').each(function(j, movie) {
+        theater.find('.showtimes .movie').each(function (j, movie) {
           movie = $(movie);
 
           cloakedUrl = movie.find('.name a').attr('href');
@@ -230,9 +230,8 @@ Showtimes.prototype.getTheaters = function(cb) {
  * @param {function} cb - Callback to handle the resulting movie object.
  * @returns {object}
  */
-Showtimes.prototype.getMovie = function(mid, cb) {
+Showtimes.prototype.getMovie = function (mid, cb) {
   var self = this;
-  var theaters = [];
 
   var options = {
     url: self.baseUrl,
@@ -246,7 +245,7 @@ Showtimes.prototype.getMovie = function(mid, cb) {
     }
   };
 
-  request(options, function(error, response, body) {
+  request(options, function (error, response, body) {
     if (error || response.statusCode !== 200) {
       if (error === null) {
         cb('Unknown error occured while querying theater data from Google Movies.');
@@ -259,6 +258,13 @@ Showtimes.prototype.getMovie = function(mid, cb) {
 
     var $ = cheerio.load(body);
 
+    var cloakedUrl;
+    var genre;
+    var imdb;
+    var rating;
+    var runtime;
+    var trailer;
+    var info;
     var match;
     var meridiem;
     var showtime;
@@ -271,7 +277,83 @@ Showtimes.prototype.getMovie = function(mid, cb) {
       return;
     }
 
-    $('.theater').each(function(i, theater) {
+    var movie = $('.movie');
+
+    cloakedUrl = movie.find('.name a').attr('href');
+
+    // Movie info format: RUNTIME - RATING - GENRE - TRAILER - IMDB
+    // Some movies don't have a rating, trailer, or IMDb pages, so we need
+    // to account for that.
+    info = movie.find('.info').text().split(' - ');
+
+    if (info[0].match(/(hr |min)/)) {
+      runtime = info[0].trim();
+      if (info[1].match(/Rated/)) {
+        rating = info[1].replace(/Rated/, '').trim();
+        if (typeof info[2] !== 'undefined') {
+          if (info[2].match(/(IMDB|Trailer)/i)) {
+            genre = false;
+          } else {
+            genre = info[2].trim();
+          }
+        } else {
+          genre = false;
+        }
+      } else {
+        rating = false;
+
+        if (info[1].match(/(IMDB|Trailer)/i)) {
+          genre = false;
+        } else {
+          genre = info[1].trim();
+        }
+      }
+    } else {
+      runtime = false;
+      rating = false;
+      genre = info[0].trim();
+    }
+
+    if (movie.find('.info a:contains("Trailer")').length) {
+      cloakedUrl = 'https://google.com' + movie.find('.info a:contains("Trailer")').attr('href');
+      trailer = qs.parse(url.parse(cloakedUrl).query).q;
+    } else {
+      trailer = false;
+    }
+
+    if (movie.find('.info a:contains("IMDb")').length) {
+      cloakedUrl = 'https://google.com' + movie.find('.info a:contains("IMDb")').attr('href');
+      imdb = qs.parse(url.parse(cloakedUrl).query).q;
+    } else {
+      imdb = false;
+    }
+
+    var movieData = {
+      id: mid,
+      name: movie.find('.name').text(),
+      runtime: runtime,
+      rating: rating,
+      genre: genre,
+      imdb: imdb,
+      trailer: trailer,
+      theaters: []
+    };
+
+    // Remove non-ASCII characters.
+    if (movieData.runtime) {
+      movieData.runtime = movieData.runtime.replace(/[^\x00-\x7F]/g, '').trim();
+    }
+
+    if (movieData.rating) {
+      movieData.rating = movieData.rating.replace(/[^\x00-\x7F]/g, '').trim();
+    }
+
+    if (movieData.genre) {
+      movieData.genre = movieData.genre.replace(/[^\x00-\x7F]/g, '').trim();
+    }
+
+
+    $('.theater').each(function (i, theater) {
       theater = $(theater);
 
       theaterData = {
@@ -307,15 +389,15 @@ Showtimes.prototype.getMovie = function(mid, cb) {
         theaterData.showtimes.push(showtimes[x].trim());
       }
 
-      theaters.push(theaterData);
+      movieData.theaters.push(theaterData);
     });
-    cb(null, theaters);
+    cb(null, movieData);
 
     return;
   });
 };
 
-Showtimes.prototype.getMovies = function(cb) {
+Showtimes.prototype.getMovies = function (cb) {
   var self = this;
   var page = 1;
   var movies = [];
@@ -329,14 +411,14 @@ Showtimes.prototype.getMovies = function(cb) {
     sort: 1,
     qs: {
       near: self.location,
-      start: ((page - 1) * 10),        
+      start: ((page - 1) * 10),
       date: (typeof self.date !== 'undefined') ? self.date : 0
     },
     headers: {
       'User-Agent': self.userAgent
     }
   };
-  request(options, function(error, response, body) {
+  request(options, function (error, response, body) {
     if (error || response.statusCode !== 200) {
       if (error === null) {
         cb('Unknown error occured while querying theater data from Google Movies.');
@@ -369,7 +451,7 @@ Showtimes.prototype.getMovies = function(cb) {
       return;
     }
     console.log($('.movie').length);
-    $('.movie').each(function(i, movie) {
+    $('.movie').each(function (i, movie) {
       movie = $(movie);
 
       cloakedUrl = movie.find('.name a').attr('href');
@@ -496,12 +578,16 @@ var app = express();
 app.use(bugsnag.requestHandler);
 app.use(bugsnag.requestHandler);
 var cache_manager = require('cache-manager');
-var memory_cache = cache_manager.caching({store: 'memory', max: 10000, ttl: 900/*seconds*/});
+var memory_cache = cache_manager.caching({
+  store: 'memory',
+  max: 10000,
+  ttl: 900 /*seconds*/
+});
 
 app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/public'));
 
-app.get('/', function(request, response) {
+app.get('/', function (request, response) {
   response.send('');
 });
 
@@ -513,20 +599,24 @@ app.get('/showtimes', function (request, response) {
   now.setDate(now.getDate() + date);
   if (request.query.lat && request.query.lon) {
     var cache_key = 'showtimes:city:' + city + 'date:' + now.getMonth() + now.getDate() + now.getFullYear();
-    memory_cache.wrap(cache_key, function(cache_cb) {
-      var s = Showtimes(request.query.lat + "," + request.query.lon, { date: date });
+    memory_cache.wrap(cache_key, function (cache_cb) {
+      var s = Showtimes(request.query.lat + "," + request.query.lon, {
+        date: date
+      });
       s.getTheaters(function (err, theaters) {
-        if (theaters){
+        if (theaters) {
           cache_cb(null, theaters)
         }
       });
 
-    }, function(err, result) {
+    }, function (err, result) {
       response.setHeader('Cache-Control', 'public, max-age=' + '60*60'); // one year
       response.send(result ? result : err);
     });
-  }else if(zipcode){
-    var s = Showtimes(zipcode, { date: date });
+  } else if (zipcode) {
+    var s = Showtimes(zipcode, {
+      date: date
+    });
     s.getTheaters(function (err, theaters) {
       response.send(theaters ? theaters : err);
     });
@@ -542,22 +632,26 @@ app.get('/movies', function (request, response) {
 
   if (request.query.lat && request.query.lon) {
     var cache_key = 'movies:city:' + city + 'date:' + now.getMonth() + now.getDate() + now.getFullYear();
-    memory_cache.wrap(cache_key, function(cache_cb) {
-      var s = Showtimes(request.query.lat + "," + request.query.lon, { date: date });
-      bugsnag.autoNotify(function() {
+    memory_cache.wrap(cache_key, function (cache_cb) {
+      var s = Showtimes(request.query.lat + "," + request.query.lon, {
+        date: date
+      });
+      bugsnag.autoNotify(function () {
 
         s.getMovies(function (err, movies) {
-          if (movies){
+          if (movies) {
             cache_cb(null, movies)
           }
         });
       });
-    }, function(err, result) {
+    }, function (err, result) {
       response.setHeader('Cache-Control', 'public, max-age=' + '60*60'); // one year
       response.send(result ? result : err);
     });
-  }else if(zipcode){
-    var s = Showtimes(zipcode, { date: date });
+  } else if (zipcode) {
+    var s = Showtimes(zipcode, {
+      date: date
+    });
     s.getTheaters(function (err, theaters) {
       response.send(theaters ? theaters : err);
     });
@@ -574,20 +668,22 @@ app.get('/movie/:id?', function (request, response) {
 
   if (request.query.lat && request.query.lon) {
     var cache_key = 'movie:mid:' + mid + ':city:' + city + ":date:" + now.getMonth() + now.getDate() + now.getFullYear();
-    memory_cache.wrap(cache_key, function(cache_cb) {
-      var s = Showtimes(request.query.lat + "," + request.query.lon, { date: date });
+    memory_cache.wrap(cache_key, function (cache_cb) {
+      var s = Showtimes(request.query.lat + "," + request.query.lon, {
+        date: date
+      });
       s.getMovie(mid, function (err, theaters) {
-        if (theaters){
+        if (theaters) {
           cache_cb(null, theaters);
         }
       });
-    }, function(err, result) {
+    }, function (err, result) {
       response.setHeader('Cache-Control', 'public, max-age=' + '60*60'); // one year
       response.send(result ? result : err);
     });
   }
 });
 
-app.listen(app.get('port'), function() {
+app.listen(app.get('port'), function () {
   console.log("Node app is running at localhost:" + app.get('port'));
 });
