@@ -8,6 +8,63 @@ var url = require('url');
 var bugsnag = require("bugsnag");
 bugsnag.register("57c9b974a3ace125470d8943e5f8da1e");
 
+var express = require('express');
+var app = express();
+app.use(bugsnag.requestHandler);
+app.use(bugsnag.requestHandler);
+var cache_manager = require('cache-manager');
+var memory_cache = cache_manager.caching({
+  store: 'memory',
+  max: 10000,
+  ttl: 3600 /*seconds*/
+});
+
+function IMDBScraper() {
+  if (!(this instanceof IMDBScraper)) {
+    return new IMDBScraper();
+  }
+  this.userAgent = 'showtimes (http://github.com/jonursenbach/showtimes)';
+  this.baseUrl = 'http://www.imdb.com/title/';
+}
+
+/**
+ * @param {function} cb - Callback to handle the resulting movie object.
+ * @returns {object}
+ */
+IMDBScraper.prototype.getMovie = function (ttid, cb) {
+  var self = this;
+
+  var options = {
+    url: self.baseUrl + ttid,
+    headers: {
+      'User-Agent': self.userAgent
+    }
+  };
+
+  request(options, function (error, response, body) {
+
+    if (error || response.statusCode !== 200) {
+      if (error === null) {
+        cb('Unknown error occured while querying theater data from Google Movies.');
+      } else {
+        cb(error);
+      }
+
+      return;
+    }
+
+    var $ = cheerio.load(body);
+
+    var posterURL = $('#img_primary img').attr('src');
+
+    cb(null, posterURL);
+
+    return;
+  });
+};
+
+module.exports = IMDBScraper;
+
 /**
  * @param {string} location
  * @param {object=} options
@@ -247,7 +304,6 @@ Showtimes.prototype.getMovie = function (mid, cb) {
       'User-Agent': self.userAgent
     }
   };
-
   request(options, function (error, response, body) {
 
     if (error || response.statusCode !== 200) {
@@ -424,8 +480,22 @@ Showtimes.prototype.getMovie = function (mid, cb) {
 
       movieData.theaters.push(theaterData);
     });
-    cb(null, movieData);
-
+    if (movieData.imdb) {
+      var imdbID = movieData.imdb.substr(movieData.imdb.lastIndexOf('tt'));
+      imdbID = imdbID.substr(0, imdbID.length - 1);
+      memory_cache.wrap(imdbID, function (cache_cb) {
+          var scraper = IMDBScraper();
+          scraper.getMovie(imdbID, function (err, data) {
+            if (data) {
+              movieData.poster = data;
+            }
+            cache_cb(null, movieData);
+          });
+        },
+        function (err, result) {
+          cb(null, result);
+        });
+    }
     return;
   });
 };
@@ -626,7 +696,7 @@ Showtimes.prototype.getMovies = function (cb) {
 
         movieData.theaters.push(theaterData);
       });
-      if (description.length > 0){
+      if (description.length > 0) {
         movies.push(movieData);
       }
     });
@@ -647,16 +717,51 @@ Showtimes.prototype.getMovies = function (cb) {
 
 module.exports = Showtimes;
 
-var express = require('express');
-var app = express();
-app.use(bugsnag.requestHandler);
-app.use(bugsnag.requestHandler);
-var cache_manager = require('cache-manager');
-var memory_cache = cache_manager.caching({
-  store: 'memory',
-  max: 10000,
-  ttl: 3600 /*seconds*/
-});
+function IMDBScraper() {
+  if (!(this instanceof IMDBScraper)) {
+    return new IMDBScraper();
+  }
+  this.userAgent = 'showtimes (http://github.com/jonursenbach/showtimes)';
+  this.baseUrl = 'http://www.imdb.com/title/';
+}
+
+/**
+ * @param {function} cb - Callback to handle the resulting movie object.
+ * @returns {object}
+ */
+IMDBScraper.prototype.getMovie = function (ttid, cb) {
+  var self = this;
+
+  var options = {
+    url: self.baseUrl + ttid,
+    headers: {
+      'User-Agent': self.userAgent
+    }
+  };
+
+  request(options, function (error, response, body) {
+
+    if (error || response.statusCode !== 200) {
+      if (error === null) {
+        cb('Unknown error occured while querying theater data from Google Movies.');
+      } else {
+        cb(error);
+      }
+
+      return;
+    }
+
+    var $ = cheerio.load(body);
+
+    var posterURL = $('#img_primary img').attr('src');
+
+    cb(null, posterURL);
+
+    return;
+  });
+};
+
+module.exports = IMDBScraper;
 
 app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/public'));
