@@ -539,7 +539,6 @@ Showtimes.prototype.getMovies = function (cb) {
       }
 
       // Longer descriptions can be split between two spans and displays a more/less link
-
       description = movie.find('span[itemprop="description"]').text();
       movie.find('#SynopsisSecond0').children().last().remove()
       description = description + movie.find('#SynopsisSecond0').text();
@@ -627,7 +626,9 @@ Showtimes.prototype.getMovies = function (cb) {
 
         movieData.theaters.push(theaterData);
       });
-      movies.push(movieData);
+      if (description.length > 0){
+        movies.push(movieData);
+      }
     });
     console.log($('#navbar td:last-child a').text());
     // No pages to paginate, so return the theaters back.
@@ -654,7 +655,7 @@ var cache_manager = require('cache-manager');
 var memory_cache = cache_manager.caching({
   store: 'memory',
   max: 10000,
-  ttl: 900 /*seconds*/
+  ttl: 3600 /*seconds*/
 });
 
 app.set('port', (process.env.PORT || 5000));
@@ -710,7 +711,6 @@ app.get('/movies', function (request, response) {
         date: date
       });
       bugsnag.autoNotify(function () {
-
         s.getMovies(function (err, movies) {
           if (movies) {
             cache_cb(null, movies)
