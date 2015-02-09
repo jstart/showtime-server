@@ -560,9 +560,8 @@ Showtimes.prototype.getMovies = function (cb) {
     $('.movie').each(function (i, movie) {
       movie = $(movie);
 
-      cloakedUrl = movie.find('.name a').attr('href');
+      cloakedUrl = movie.find('.header h2[itemprop="name"] a').attr('href');
       movieId = qs.parse(url.parse(cloakedUrl).query).mid;
-
       // Movie info format: RUNTIME - RATING - GENRE - TRAILER - IMDB
       // Some movies don't have a rating, trailer, or IMDb pages, so we need
       // to account for that.
