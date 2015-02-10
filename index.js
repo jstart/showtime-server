@@ -610,7 +610,7 @@ Showtimes.prototype.getMovies = function (cb) {
       // Longer descriptions can be split between two spans and displays a more/less link
       description = movie.find('span[itemprop="description"]').text();
       movie.find('#SynopsisSecond0').children().last().remove()
-      description = description + movie.find('#SynopsisSecond0').text();
+      description = description + " " + movie.find('#SynopsisSecond0').text();
       description.replace('/"/', '');
       description = description.trim();
 
