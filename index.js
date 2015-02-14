@@ -317,7 +317,7 @@ Showtimes.prototype.getMovie = function (mid, cb) {
     }
 
     var $ = cheerio.load(body, {
-      decodeEntities: true
+      decodeEntities: false
     });
 
     var cloakedUrl;
