@@ -10,7 +10,7 @@
     "express": "4.x",
     "cheerio": "0.18.x",
     "request": "2.x",
-    "cache-manager": "0.16.x",
+    "cache-manager": "0.x",
     "bugsnag": "1.x"
   },
   "engines": {
