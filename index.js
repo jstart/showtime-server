@@ -316,7 +316,9 @@ Showtimes.prototype.getMovie = function (mid, cb) {
       return;
     }
 
-    var $ = cheerio.load(body);
+    var $ = cheerio.load(body, {
+      decodeEntities: true
+    });
 
     var cloakedUrl;
     var genre;
@@ -751,9 +753,7 @@ IMDBScraper.prototype.getMovie = function (ttid, cb) {
     }
 
     var $ = cheerio.load(body);
-
     var posterURL = $('#img_primary img').attr('src');
-
     cb(null, posterURL);
 
     return;
