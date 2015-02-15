@@ -4,7 +4,6 @@ var request = require('request');
 var cheerio = require('cheerio');
 var qs = require('querystring');
 var url = require('url');
-
 var bugsnag = require("bugsnag");
 bugsnag.register("57c9b974a3ace125470d8943e5f8da1e");
 
@@ -314,7 +313,6 @@ Showtimes.prototype.getMovie = function (mid, cb) {
 
       return;
     }
-
     var $ = cheerio.load(body);
 
     var cloakedUrl;
@@ -349,7 +347,6 @@ Showtimes.prototype.getMovie = function (mid, cb) {
 
     movie.find('.desc .info').not('.info.links').find('> br').replaceWith("\n");
     var infoArray = movie.find('.desc .info').not('.info.links').text().split('\n');
-
     info = infoArray[0].split(' - ');
     if (info[0].match(/(hr |min)/)) {
       runtime = info[0].trim();
@@ -479,7 +476,8 @@ Showtimes.prototype.getMovie = function (mid, cb) {
 
       movieData.theaters.push(theaterData);
     });
-    if (movieData.imdb) {
+    console.log(movieData.imdb);
+    if (movieData.imdb != false) {
       var imdbID = movieData.imdb.substr(movieData.imdb.lastIndexOf('tt'));
       imdbID = imdbID.substr(0, imdbID.length - 1);
       memory_cache.wrap(imdbID, function (cache_cb) {
@@ -494,6 +492,8 @@ Showtimes.prototype.getMovie = function (mid, cb) {
         function (err, result) {
           cb(null, result);
         });
+    } else {
+      cb(null, movieData);
     }
     return;
   });
@@ -530,7 +530,6 @@ Showtimes.prototype.getMovies = function (cb) {
 
       return;
     }
-
     var $ = cheerio.load(body);
 
     var cloakedUrl;
