@@ -792,6 +792,8 @@ app.get('/showtimes', function (request, response) {
     s.getTheaters(function (err, theaters) {
       response.send(theaters ? theaters : err);
     });
+  }else {
+    response.send({error: "Location Required"});
   }
 });
 
@@ -826,6 +828,8 @@ app.get('/movies', function (request, response) {
     s.getTheaters(function (err, theaters) {
       response.send(theaters ? theaters : err);
     });
+  } else {
+    response.send({error: "Location Required"});
   }
 });
 
@@ -852,6 +856,9 @@ app.get('/movie/:id?', function (request, response) {
       response.setHeader('Cache-Control', 'public, max-age=' + '60*60'); // one year
       response.send(result ? result : err);
     });
+  }
+  else {
+    response.send({error: "Location Required"});
   }
 });
 
