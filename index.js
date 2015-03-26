@@ -781,7 +781,7 @@ app.get('/showtimes', function (request, response) {
         if (theaters) {
           cache_cb(null, theaters)
         }else {
-            cache_cb({error: err}, null)
+            cache_cb([error: err], null)
           }
       });
 
@@ -819,7 +819,7 @@ app.get('/movies', function (request, response) {
           if (movies) {
             cache_cb(null, movies)
           }else {
-            cache_cb({error: err}, null)
+            cache_cb([error: err], null)
           }
         });
       });
@@ -857,7 +857,7 @@ app.get('/movie/:id?', function (request, response) {
         if (theaters) {
           cache_cb(null, theaters);
         }else {
-            cache_cb({error: err}, null)
+            cache_cb([error: err], null)
           }
       });
     }, function (err, result) {
