@@ -7,11 +7,10 @@ var url = require('url');
 var bugsnag = require("bugsnag");
 bugsnag.register("57c9b974a3ace125470d8943e5f8da1e");
 
-var newrelic = require('newrelic');
+//var newrelic = require('newrelic');
 var express = require('express');
 var app = express();
-app.locals.newrelic = newrelic;
-app.use(bugsnag.requestHandler);
+//app.locals.newrelic = newrelic;
 app.use(bugsnag.requestHandler);
 var cache_manager = require('cache-manager');
 var memory_cache = cache_manager.caching({
@@ -781,7 +780,7 @@ app.get('/showtimes', function (request, response) {
         if (theaters) {
           cache_cb(null, theaters)
         }else {
-            cache_cb(["error": err], null)
+            cache_cb([err], null)
           }
       });
 
@@ -819,7 +818,7 @@ app.get('/movies', function (request, response) {
           if (movies) {
             cache_cb(null, movies)
           }else {
-            cache_cb(["error": err], null)
+            cache_cb([err], null)
           }
         });
       });
@@ -857,7 +856,7 @@ app.get('/movie/:id?', function (request, response) {
         if (theaters) {
           cache_cb(null, theaters);
         }else {
-            cache_cb(["error": err], null)
+            cache_cb([err], null)
           }
       });
     }, function (err, result) {
