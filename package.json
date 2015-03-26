@@ -11,7 +11,8 @@
     "cheerio": "0.18.x",
     "request": "2.x",
     "cache-manager": "0.18.x",
-    "bugsnag": "1.x"
+    "bugsnag": "1.x",
+    "newrelic": "1.x"
   },
   "engines": {
     "node": "0.12.x"
