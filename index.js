@@ -551,7 +551,7 @@ Showtimes.prototype.getMovies = function (cb) {
     var showtimes;
     var theaterId;
     var theaterData;
-
+    
     if ($('.movie').length === 0) {
       cb($('#results').text());
       return;
@@ -780,7 +780,9 @@ app.get('/showtimes', function (request, response) {
       s.getTheaters(function (err, theaters) {
         if (theaters) {
           cache_cb(null, theaters)
-        }
+        }else {
+            cache_cb(err, null)
+          }
       });
 
     }, function (err, result) {
@@ -816,6 +818,8 @@ app.get('/movies', function (request, response) {
         s.getMovies(function (err, movies) {
           if (movies) {
             cache_cb(null, movies)
+          }else {
+            cache_cb(err, null)
           }
         });
       });
@@ -852,7 +856,9 @@ app.get('/movie/:id?', function (request, response) {
       s.getMovie(mid, function (err, theaters) {
         if (theaters) {
           cache_cb(null, theaters);
-        }
+        }else {
+            cache_cb(err, null)
+          }
       });
     }, function (err, result) {
       response.setHeader('Cache-Control', 'public, max-age=' + '60*60'); // one year
