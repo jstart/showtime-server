@@ -174,9 +174,9 @@ Showtimes.prototype.getTheaters = function (cb) {
           // to account for that.
           info = movie.find('.info').text().split(' - ');
 
-          if (info[0].match(/(hr |min)/)) {
+          if (info[0] != undefined && info[0].match(/(hr |min)/)) {
             runtime = info[0].trim();
-            if (info[1].match(/Rated/)) {
+            if (info[1] != undefined && info[1].match(/Rated/)) {
               rating = info[1].replace(/Rated/, '').trim();
               if (typeof info[2] !== 'undefined') {
                 if (info[2].match(/(IMDB|Trailer)/i)) {
@@ -190,7 +190,7 @@ Showtimes.prototype.getTheaters = function (cb) {
             } else {
               rating = false;
 
-              if (info[1].match(/(IMDB|Trailer)/i)) {
+              if (info[1] != undefined && info[1].match(/(IMDB|Trailer)/i)) {
                 genre = false;
               } else {
                 genre = info[1].trim();
@@ -567,9 +567,9 @@ Showtimes.prototype.getMovies = function (cb) {
       var infoArray = movie.find('.desc .info').not('.info.links').text().split('\n');
 
       info = infoArray[0].split(' - ');
-      if (info[0].match(/(hr |min)/)) {
+      if (info[0] != undefined && info[0].match(/(hr |min)/)) {
         runtime = info[0].trim();
-        if (info[1].match(/Rated/)) {
+        if (info[1] != undefined && info[1].match(/Rated/)) {
           rating = info[1].replace(/Rated/, '').trim();
           if (typeof info[2] !== 'undefined') {
             if (info[2].match(/(IMDB|Trailer)/i)) {
@@ -583,7 +583,7 @@ Showtimes.prototype.getMovies = function (cb) {
         } else {
           rating = false;
 
-          if (info[1].match(/(IMDB|Trailer)/i)) {
+          if (info[1] != undefined && info[1].match(/(IMDB|Trailer)/i)) {
             genre = false;
           } else {
             genre = info[1].trim();
