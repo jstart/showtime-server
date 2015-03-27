@@ -477,7 +477,7 @@ Showtimes.prototype.getMovie = function (mid, cb) {
 
       movieData.theaters.push(theaterData);
     });
-    console.log(movieData.imdb);
+
     if (movieData.imdb != false) {
       var imdbID = movieData.imdb.substr(movieData.imdb.lastIndexOf('tt'));
       imdbID = imdbID.substr(0, imdbID.length - 1);
@@ -550,7 +550,7 @@ Showtimes.prototype.getMovies = function (cb) {
     var showtimes;
     var theaterId;
     var theaterData;
-    
+
     if ($('.movie').length === 0) {
       cb($('#results').text());
       return;
@@ -693,9 +693,27 @@ Showtimes.prototype.getMovies = function (cb) {
 
         movieData.theaters.push(theaterData);
       });
-      if (description.length > 0) {
+
+      // This is a bad hack, should not rely on data being cached and async callbacks.
+      if (movieData.imdb != false) {
+        var imdbID = movieData.imdb.substr(movieData.imdb.lastIndexOf('tt'));
+        imdbID = imdbID.substr(0, imdbID.length - 1);
+        memory_cache.wrap(imdbID, function (cache_cb) {
+            var scraper = IMDBScraper();
+            scraper.getMovie(imdbID, function (err, data) {
+              if (data) {
+                movieData.poster = data;
+              }
+              cache_cb(null, movieData);
+            });
+          },
+          function (err, result) {
+            movies.push(result);
+          });
+      } else {
         movies.push(movieData);
       }
+
     });
     // No pages to paginate, so return the theaters back.
     if ($('#navbar td:last-child a').text().length !== 4) {
@@ -779,9 +797,9 @@ app.get('/showtimes', function (request, response) {
       s.getTheaters(function (err, theaters) {
         if (theaters) {
           cache_cb(null, theaters)
-        }else {
-            cache_cb([err], null)
-          }
+        } else {
+          cache_cb([err], null)
+        }
       });
 
     }, function (err, result) {
@@ -795,8 +813,10 @@ app.get('/showtimes', function (request, response) {
     s.getTheaters(function (err, theaters) {
       response.send(theaters ? theaters : err);
     });
-  }else {
-    response.send({error: "Location Required"});
+  } else {
+    response.send({
+      error: "Location Required"
+    });
   }
 });
 
@@ -817,7 +837,7 @@ app.get('/movies', function (request, response) {
         s.getMovies(function (err, movies) {
           if (movies) {
             cache_cb(null, movies)
-          }else {
+          } else {
             cache_cb([err], null)
           }
         });
@@ -834,7 +854,9 @@ app.get('/movies', function (request, response) {
       response.send(theaters ? theaters : err);
     });
   } else {
-    response.send({error: "Location Required"});
+    response.send({
+      error: "Location Required"
+    });
   }
 });
 
@@ -855,17 +877,18 @@ app.get('/movie/:id?', function (request, response) {
       s.getMovie(mid, function (err, theaters) {
         if (theaters) {
           cache_cb(null, theaters);
-        }else {
-            cache_cb([err], null)
-          }
+        } else {
+          cache_cb([err], null)
+        }
       });
     }, function (err, result) {
       response.setHeader('Cache-Control', 'public, max-age=' + '60*60'); // one year
       response.send(result ? result : err);
     });
-  }
-  else {
-    response.send({error: "Location Required"});
+  } else {
+    response.send({
+      error: "Location Required"
+    });
   }
 });
 
