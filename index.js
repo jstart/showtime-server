@@ -694,6 +694,7 @@ Showtimes.prototype.getMovies = function (cb) {
         movieData.theaters.push(theaterData);
       });
 
+      movies.push(movieData);
     });
     // No pages to paginate, so return the theaters back.
     if ($('#navbar td:last-child a').text().length !== 4) {
