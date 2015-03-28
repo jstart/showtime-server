@@ -694,26 +694,6 @@ Showtimes.prototype.getMovies = function (cb) {
         movieData.theaters.push(theaterData);
       });
 
-      // This is a bad hack, should not rely on data being cached and async callbacks.
-      if (movieData.imdb != false) {
-        var imdbID = movieData.imdb.substr(movieData.imdb.lastIndexOf('tt'));
-        imdbID = imdbID.substr(0, imdbID.length - 1);
-        memory_cache.wrap(imdbID, function (cache_cb) {
-            var scraper = IMDBScraper();
-            scraper.getMovie(imdbID, function (err, data) {
-              if (data) {
-                movieData.poster = data;
-              }
-              cache_cb(null, movieData);
-            });
-          },
-          function (err, result) {
-            movies.push(result);
-          });
-      } else {
-        movies.push(movieData);
-      }
-
     });
     // No pages to paginate, so return the theaters back.
     if ($('#navbar td:last-child a').text().length !== 4) {
