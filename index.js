@@ -192,7 +192,7 @@ Showtimes.prototype.getTheaters = function (cb) {
 
               if (info[1] != undefined && info[1].match(/(IMDB|Trailer)/i)) {
                 genre = false;
-              } else {
+              } else if (info[1] != undefined) {
                 genre = info[1].trim();
               }
             }
