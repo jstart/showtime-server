@@ -583,7 +583,7 @@ Showtimes.prototype.getMovies = function (cb) {
         } else {
           rating = false;
 
-          if (info[1] != undefined && info[1].match(/(IMDB|Trailer)/i)) {
+          if (info[1] == undefined && info[1].match(/(IMDB|Trailer)/i)) {
             genre = false;
           } else {
             genre = info[1].trim();
