@@ -254,9 +254,9 @@ Showtimes.prototype.getTheaters = function (cb) {
             match = showtime.match(/(am|pm)/);
             if (match) {
               meridiem = match[0];
-            } else {
-              showtime += meridiem;
-            }
+            } else if (meridiem) {
+             showtime += meridiem;
+           }
 
             showtimes[x] = showtime;
           }
@@ -463,9 +463,9 @@ Showtimes.prototype.getMovie = function (mid, cb) {
         match = showtime.match(/(am|pm)/);
         if (match) {
           meridiem = match[0];
-        } else {
-          showtime += meridiem;
-        }
+        } else if (meridiem) {
+             showtime += meridiem;
+           }
 
         showtimes[x] = showtime;
       }
@@ -679,9 +679,9 @@ Showtimes.prototype.getMovies = function (cb) {
           match = showtime.match(/(am|pm)/);
           if (match) {
             meridiem = match[0];
-          } else {
-            showtime += meridiem;
-          }
+          } else if (meridiem) {
+             showtime += meridiem;
+           }
 
           showtimes[x] = showtime;
         }
